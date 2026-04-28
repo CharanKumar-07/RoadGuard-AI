@@ -1,0 +1,38 @@
+# Lane Calibration Example
+# Copy to config/calibration.yaml and customise per camera.
+#
+# polygon: list of [x, y] pixel coordinates defining the lane region (4+ points)
+# vector:  [dx, dy] representing the ALLOWED direction of travel
+#          e.g. [1, 0]  = left-to-right
+#               [-1, 0] = right-to-left
+#               [0, 1]  = top-to-bottom (toward camera)
+#               [0, -1] = bottom-to-top (away from camera)
+
+calibrations:
+  - camera_id: cam_01
+    lanes:
+      - id: lane_left
+        vector: [1, 0]            # vehicles should move left → right
+        polygon:
+          - [0,   200]
+          - [640, 200]
+          - [640, 480]
+          - [0,   480]
+
+      - id: lane_right
+        vector: [-1, 0]           # vehicles should move right → left
+        polygon:
+          - [640,  200]
+          - [1280, 200]
+          - [1280, 480]
+          - [640,  480]
+
+  - camera_id: cam_02
+    lanes:
+      - id: highway_lane
+        vector: [0, 1]            # vehicles should move top → bottom
+        polygon:
+          - [400,  0]
+          - [880,  0]
+          - [880, 1080]
+          - [400, 1080]

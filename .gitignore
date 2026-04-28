@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# RoadGuard AI
+evidence/
+roadguard.db
+*.log
+datasets/
+models/*.pt
+models/*.h5
+scripts/*.pt
+*.mp4
+*.cache
+runs/
+scratch/
+.idea/
+.vscode/
+
+# Next.js
+.next/
+node_modules/
+dist/
+build/

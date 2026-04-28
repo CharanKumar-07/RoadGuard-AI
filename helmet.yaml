@@ -1,0 +1,8 @@
+# helmet.yaml
+path: ./datasets/helmet_detection
+train: images/train
+val: images/val
+test: images/test
+
+nc: 2   # adjust if you have more classes
+names: ['with_helmet', 'without_helmet']   # adjust class names to match your dataset

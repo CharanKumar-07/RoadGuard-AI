@@ -1,0 +1,182 @@
+RoadGuard AI - Step-by-Step Execution Guide
+
+This file explains the full execution flow of the project from setup to review.
+It is written for the current project layout where the main web dashboard is the
+Next.js app in roadguard-next/ and the backend is the FastAPI service.
+
+Software and Tools Used
+
+- Python 3.11+ - backend services, model inference, and processor scripts.
+- Node.js 18+ - Next.js dashboard and frontend tooling.
+- VS Code - development and code editing.
+- Git - source control and project history.
+- FastAPI - backend REST API and incident management.
+- Next.js - main web dashboard and user interface.
+- PyTorch - YOLO model runtime and GPU inference support.
+- Ultralytics - training and running YOLO accident and number plate models.
+- TensorFlow - DeblurGAN-v2 image enhancement model.
+- OpenCV - video frame processing and image operations.
+- EasyOCR - pretrained OCR engine for number plate text extraction.
+- Roboflow - dataset collection, labelling, and YOLO export.
+- SQLite / PostgreSQL - incident database storage.
+- Docker / Docker Compose - optional container-based deployment.
+- Twilio / SMTP - optional alert delivery services.
+
+1. Prerequisites
+
+- Install Python 3.11+.
+- Install Node.js 18+.
+- Make sure the model files are present in models/:
+  - acc_detect.pt
+  - yolov8n.pt
+  - yolo26n.pt
+  - fpn_inception.h5
+- Accident and number plate detection models are trained from Roboflow
+  datasets exported in YOLO format and then fine-tuned with Ultralytics.
+- Make sure the input video or camera source is available.
+- Optional: configure .env if you need database, Twilio, or SMTP settings.
+
+2. Project Setup
+
+- Open the project folder in VS Code or File Explorer.
+- Confirm the Python virtual environment exists at .venv.
+- If needed, install Python dependencies:
+  pip install -r requirements.txt
+- Install Next.js dependencies:
+  cd roadguard-next
+  npm install
+
+3. Start the Backend API
+
+The backend must run first because the dashboard and processor send data to it.
+
+Command:
+  python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
+What this does:
+- Starts the FastAPI backend.
+- Creates or connects to the database.
+- Serves incident APIs, health checks, WebSocket updates, and evidence files.
+- Makes the backend available at http://localhost:8000
+
+4. Start the Next.js Dashboard
+
+The main homepage/dashboard for this project is the Node.js app.
+
+Commands:
+  cd roadguard-next
+  npm run dev
+
+What this does:
+- Starts the Next.js frontend.
+- Opens the dashboard at http://localhost:3000
+- Lets you view incidents, live analysis pages, and review records.
+
+5. Start the Video Processor
+----------------------------
+The processor runs the AI pipeline on camera streams or video files.
+
+Command:
+  python -m src.processor --cameras config/cameras.yaml
+
+What this does:
+- Loads the detection models.
+- Starts one processing thread per enabled camera.
+- Runs vehicle detection, accident detection, plate detection, deblurring,
+  OCR, hit-and-run logic, and wrong-way monitoring.
+- Posts detected incidents back to the backend.
+
+6. Upload or Connect Video Input
+
+You can feed the system in two common ways:
+
+A. Through the Next.js live dashboard:
+- Open http://localhost:3000/live
+- Upload a video file.
+- The frontend sends the file to the backend video endpoint.
+- The backend processes the file and streams progress and incidents back.
+
+B. Through the processor camera config:
+- Edit config/cameras.yaml.
+- Add or update camera sources.
+- Use webcam index, RTSP URL, or local video path.
+- Start the processor again if config changes.
+
+7. Detection Execution Flow
+
+When a frame is processed, the project follows this order:
+
+- Frame enhancement for plate reading.
+- License plate detection.
+- Optional deblurring of the plate crop.
+- OCR on the enhanced crop.
+- Vehicle detection and tracking.
+- Accident detection using the Ultralytics-trained accident model that was
+  built from Roboflow-labeled datasets.
+- If an accident is confirmed, the system stores the event and evidence.
+- If hit-and-run or wrong-way logic triggers, those incidents are also stored.
+
+8. Incident Storage and Review
+
+When a detection is confirmed:
+- The backend stores the incident in the database.
+- Evidence images are saved in the evidence/ folder.
+- The Next.js dashboard saves a review copy in localStorage for quick review.
+- You can open the incident detail page for full metadata.
+
+Useful pages:
+- Home: http://localhost:3000
+- Live analysis: http://localhost:3000/live
+- Incident archive: http://localhost:3000/incidents
+- Incident detail: http://localhost:3000/incidents/[id]
+
+9. How to Review Results
+
+- Open the incident archive page.
+- Search by plate number, incident type, or date.
+- Open a case to see evidence image and metadata.
+- Change incident status to pending, investigating, or resolved.
+- Use the live dashboard review panel to mark a saved record as reviewed.
+
+
+10. Notes
+
+- If accident detection is weak on a specific video, lower the accident confidence
+  threshold using environment variables.
+- If plate OCR is poor, keep deblur forced on for the live pipeline.
+- If the dashboard cannot reach the backend, confirm backend is running on
+  http://localhost:8000.
+- The OCR engine used here is EasyOCR, which is a pretrained deep-learning OCR
+  system for text detection and recognition. This project does not train OCR
+  from scratch; it improves plate readability through preprocessing and deblur.
+
+11. Model Training Using SDLC
+
+The AI models in this project follow a software development lifecycle so they
+can be planned, built, validated, deployed, and improved in a controlled way.
+
+- Requirement analysis: define what each model must do, such as accident
+  detection, vehicle tracking, license plate localisation, OCR, and deblurring.
+- Data collection: gather accident and plate images/videos from Roboflow,
+  export them in YOLO format, and keep separate labels for vehicles, plates,
+  and blurry frames.
+- Design: choose the right model for each task, for example Ultralytics YOLO
+  for accident and number plate detection, DeblurGAN-v2 for enhancement, and
+  pretrained EasyOCR for plate text extraction.
+- Implementation: prepare the Roboflow data, apply augmentation, split
+  training and validation sets, and train the YOLO models with Ultralytics
+  until the metrics are stable.
+- Testing and validation: run the trained models on unseen images and videos,
+  compare precision, recall, and false positives, and check blurry and clear
+  scenes separately.
+- Deployment: store the approved weights in the models/ folder and wire them
+  into the backend, processor, and dashboard pipelines.
+- Maintenance: monitor real incident logs, collect missed detections, retrain
+  with new samples, and replace the model weights when performance improves.
+
+In this project, the detector and deblurring models are the main trained
+components. EasyOCR is used as a pretrained OCR engine, so the project mainly
+improves plate readability through preprocessing, filtering, and deblurring
+rather than retraining OCR itself.
+
+End of file.

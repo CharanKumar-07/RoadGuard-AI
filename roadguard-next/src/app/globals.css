@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #020617; /* Slate-950 */
+  --color-surface: #0f172a;    /* Slate-900 */
+  --color-surface-dark: #070a13;
+  --color-roadguard-blue: #6366f1; /* Indigo-500 */
+  --color-roadguard-cyan: #94a3b8; /* Slate-400 (Safe UI) */
+  --color-roadguard-indigo: #818cf8;
+  --color-alert-red: #f43f5e;     /* Rose-500 */
+  --color-premium-gold: #fbbf24;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-background text-white/90 antialiased overflow-x-hidden selection:bg-roadguard-cyan/30;
+    background-color: #0f1115;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-roadguard-cyan;
+  }
+
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-3xl border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+
+  .glass-card-hover {
+    @apply hover:bg-white/[0.06] hover:border-white/[0.15] hover:shadow-roadguard-blue/10 transition-all duration-500;
+  }
+
+  .mesh-gradient {
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(6, 182, 212, 0.05) 0px, transparent 50%);
+  }
+
+  .premium-blur {
+    backdrop-filter: blur(40px) saturate(180%);
+  }
+
+  /* Force hide Next.js / Turbopack dev indicators */
+  nextjs-portal,
+  [data-nextjs-static-indicator],
+  [data-nextjs-build-indicator],
+  .nextjs-static-indicator-container {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}

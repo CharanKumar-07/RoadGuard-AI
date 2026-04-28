@@ -1,0 +1,30 @@
+# ── Core ML / Vision ─────────────────────────────────────────────────────
+# ⚠️  For GPU support, install PyTorch with CUDA first:
+#     pip install torch --index-url https://download.pytorch.org/whl/cu121
+# Then install the rest of this file:
+#     pip install -r requirements.txt
+ultralytics>=8.0.0
+opencv-python-headless>=4.9.0
+numpy>=1.24.0
+torch>=2.1.0
+
+# ── DeblurGAN (Keras model) ──────────────────────────────────────────────
+tensorflow>=2.14.0
+
+# ── OCR ──────────────────────────────────────────────────────────────────
+easyocr>=1.7.0
+# paddlepaddle>=2.6.0  # legacy – replaced by EasyOCR
+# paddleocr>=2.7.0    # legacy – replaced by EasyOCR
+
+# ── HTTP / async ─────────────────────────────────────────────────────────
+requests>=2.32.0
+
+# ── Config / utilities ───────────────────────────────────────────────────
+PyYAML>=6.0.1
+
+# ── Backend ───────────────────────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.30
+python-multipart==0.0.9
+twilio==9.1.0

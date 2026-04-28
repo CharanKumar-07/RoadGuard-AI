@@ -1,0 +1,27 @@
+# Camera Configuration Example
+# Copy to config/cameras.yaml and customise.
+
+cameras:
+  - id: cam_01
+    description: "Main intersection – North"
+    source: "0"                # webcam index  (use "0" for default webcam)
+    fps: 25
+    width: 1280
+    height: 720
+    enabled: true
+
+  - id: cam_02
+    description: "Highway Entry – South"
+    source: "rtsp://admin:password@192.168.1.100:554/stream1"  # RTSP URL
+    fps: 25
+    width: 1920
+    height: 1080
+    enabled: true
+
+  - id: cam_03
+    description: "Parking lot – test file"
+    source: "data/sample_video.mp4"   # local video file for testing
+    fps: 25
+    width: 1280
+    height: 720
+    enabled: false
